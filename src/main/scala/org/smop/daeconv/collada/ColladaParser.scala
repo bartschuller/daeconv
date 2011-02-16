@@ -21,7 +21,7 @@ case class ColladaException(msg: String) extends RuntimeException(msg)
 class ColladaParser(val fileName: String) {
   val dae = new Collada
   def parse(): Collada = {
-    val p = new RichXMLEventReader(Source.fromPath(fileName))
+    val p = new RichXMLEventReader(Source.fromFile(fileName))
     p.find(ev =>
       ev match {
         case EvElemStart(prefix, "COLLADA", _, nsb) => {
@@ -153,8 +153,11 @@ class ColladaParser(val fileName: String) {
         }
         case s@EvElemStart(_, "int_array", _, _) => p.skipElement(s)
         case s@EvElemStart(_, "technique_common", _, _) => {
+          p.skipElement(s)
+          /*
           val technique = parseTechniqueCommon(s, p)
           src.addChild(technique)
+          */
         }
         case s@EvElemStart(_, "technique", _, _) => p.skipElement(s)
         case EvElemStart(_, elem, _, _) =>
@@ -196,7 +199,7 @@ class ColladaParser(val fileName: String) {
 
 object ColladaParser {
   def main(args: Array[String]) {
-    val cp = new ColladaParser("/Users/schuller/physics/bullet-trunk/jenga2.dae")
+    val cp = new ColladaParser("jenga2.dae")
     println(cp.parse())
     exit
   }
